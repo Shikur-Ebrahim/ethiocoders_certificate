@@ -43,7 +43,7 @@ export async function findCertificateByPhone(phone: string) {
     const data = docSnap.data();
 
     if (data.status !== "paid" || !data.certificateUrl) {
-      return { success: false, error: "Your application is still under review or pending verification." };
+      return { success: false, error: "Your application is still under review.", isPending: true };
     }
 
     // Auto-repair old broken Cloudinary URLs

@@ -12,6 +12,7 @@ export default function VerifyPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [isNotRegistered, setIsNotRegistered] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const [certificateData, setCertificateData] = useState<{ url: string; name: string } | null>(null);
 
   const handleVerify = async (e: React.FormEvent) => {
@@ -25,14 +26,18 @@ export default function VerifyPage() {
     setError("");
     setCertificateData(null);
     setIsNotRegistered(false);
+    setIsPending(false);
 
     const res = await findCertificateByPhone(phone.trim());
 
     if (res.success && res.certificateUrl) {
       setCertificateData({ url: res.certificateUrl, name: res.fullName || "Applicant" });
     } else {
-      if ((res as any).isNotRegistered) {
+      const result = res as any;
+      if (result.isNotRegistered) {
         setIsNotRegistered(true);
+      } else if (result.isPending) {
+        setIsPending(true);
       } else {
         setError(res.error || "Failed to find certificate.");
       }
@@ -191,6 +196,35 @@ export default function VerifyPage() {
                 className="mt-3 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 text-xs font-bold transition-colors"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pending Modal */}
+      {isPending && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border border-zinc-200 dark:border-zinc-800 relative overflow-hidden animate-in zoom-in-95 duration-300">
+            {/* Decoration */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full -mr-16 -mt-16" />
+            
+            <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="w-20 h-20 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/20">
+                <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+              </div>
+
+              <h3 className="text-2xl font-black text-zinc-900 dark:text-white mb-3">Under Review</h3>
+              
+              <p className="text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed mb-8">
+                Dear Sir/Madam, your certificate is currently being generated. Please check back again in a few minutes.
+              </p>
+
+              <button
+                onClick={() => router.push("/")}
+                className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-black font-black rounded-xl shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
+              >
+                OK, I'll Check Later
               </button>
             </div>
           </div>
