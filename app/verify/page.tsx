@@ -1,14 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Loader2, Download, CheckCircle, ArrowLeft } from "lucide-react";
+import { Search, Loader2, Download, CheckCircle, ArrowLeft, UserPlus, X } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { findCertificateByPhone } from "./actions";
 
 export default function VerifyPage() {
+  const router = useRouter();
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isNotRegistered, setIsNotRegistered] = useState(false);
   const [certificateData, setCertificateData] = useState<{ url: string; name: string } | null>(null);
 
   const handleVerify = async (e: React.FormEvent) => {
@@ -21,13 +24,18 @@ export default function VerifyPage() {
     setIsLoading(true);
     setError("");
     setCertificateData(null);
+    setIsNotRegistered(false);
 
     const res = await findCertificateByPhone(phone.trim());
 
     if (res.success && res.certificateUrl) {
       setCertificateData({ url: res.certificateUrl, name: res.fullName || "Applicant" });
     } else {
-      setError(res.error || "Failed to find certificate.");
+      if ((res as any).isNotRegistered) {
+        setIsNotRegistered(true);
+      } else {
+        setError(res.error || "Failed to find certificate.");
+      }
     }
 
     setIsLoading(false);
@@ -152,6 +160,42 @@ export default function VerifyPage() {
           )}
         </div>
       </div>
+
+      {/* Not Registered Modal */}
+      {isNotRegistered && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border border-zinc-200 dark:border-zinc-800 relative overflow-hidden animate-in zoom-in-95 duration-300">
+            {/* Decoration */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full -mr-16 -mt-16" />
+            
+            <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="w-20 h-20 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6 border border-emerald-500/20">
+                <UserPlus className="w-10 h-10 text-emerald-500" />
+              </div>
+
+              <h3 className="text-2xl font-black text-zinc-900 dark:text-white mb-3">Not Registered</h3>
+              
+              <p className="text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed mb-8">
+                This phone number is not registered. Please register first to be able to download your certificate.
+              </p>
+
+              <button
+                onClick={() => router.push("/generate")}
+                className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-xl shadow-emerald-500/20 transition-all active:scale-95 flex items-center justify-center gap-2"
+              >
+                OK, Register Now
+              </button>
+              
+              <button 
+                onClick={() => setIsNotRegistered(false)}
+                className="mt-3 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 text-xs font-bold transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

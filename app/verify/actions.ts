@@ -36,7 +36,7 @@ export async function findCertificateByPhone(phone: string) {
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      return { success: false, error: "No certificate found for this phone number." };
+      return { success: false, error: "This phone number is not registered.", isNotRegistered: true };
     }
 
     const docSnap = querySnapshot.docs[0];
