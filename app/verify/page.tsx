@@ -113,15 +113,6 @@ export default function VerifyPage() {
             </form>
           ) : (
             <div className="space-y-8 animate-in zoom-in-95 duration-500">
-              <div className="py-8 px-4 bg-emerald-50 dark:bg-emerald-500/5 border-2 border-emerald-500/20 rounded-md text-center shadow-sm relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <h3 className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mb-3 tracking-tight">
-                  Certificate Found!
-                </h3>
-                <p className="text-zinc-600 dark:text-zinc-400 font-semibold text-lg leading-relaxed relative z-10">
-                  Congratulations <strong className="text-black dark:text-white font-black underline decoration-emerald-500/30 underline-offset-4 uppercase">{certificateData.name}</strong>, your verified certificate is ready for download.
-                </p>
-              </div>
 
               <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden border-4 border-zinc-100 dark:border-zinc-800 shadow-2xl bg-zinc-100 dark:bg-zinc-950">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
