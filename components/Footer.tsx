@@ -24,7 +24,7 @@ export default function Footer() {
           title="Secret Admin Access"
         ></div>
         <span className="text-zinc-400 dark:text-zinc-600 text-sm select-none">
-          © {new Date().getFullYear()} EthioCoders Certify Application.
+          © {new Date().getFullYear()} 5M certificate Application.
         </span>
       </div>
       

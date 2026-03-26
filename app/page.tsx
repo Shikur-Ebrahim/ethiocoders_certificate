@@ -93,7 +93,7 @@ export default function Home() {
         </h2>
 
         <p className="max-w-2xl text-lg md:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed mb-5 sm:mb-7 font-medium">
-          Empowering the future of ethiocoders with <span className="font-black text-zinc-900 dark:text-zinc-50">Secure, Transparent, and Automated</span> certificate generation.
+          Empowering the future of 5M certificate with <span className="font-black text-zinc-900 dark:text-zinc-50">Secure, Transparent, and Automated</span> certificate generation.
         </p>
 
         <Footer />

@@ -106,7 +106,7 @@ export default function GeneratePage() {
             Certificate <span className="text-emerald-500">Generation</span>
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400 text-base md:text-lg max-w-xl mx-auto md:mx-0">
-            Complete the form below to generate your official EthioCoders certificate.
+            Complete the form below to generate your official 5M certificate.
           </p>
         </div>
 

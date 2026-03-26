@@ -1,6 +1,6 @@
 {
-  "name": "EthioCoders Certify",
-  "short_name": "EthioCertify",
+  "name": "5M certificate Application",
+  "short_name": "5M certificate",
   "description": "Automatic, verifiable digital certificates.",
   "start_url": "/",
   "scope": "/",
@@ -9,10 +9,9 @@
   "theme_color": "#0b1220",
   "icons": [
     {
-      "src": "/ethiopian_coder_logo.png",
+      "src": "/five_m_icon.png",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ]
 }
-

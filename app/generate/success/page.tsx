@@ -112,7 +112,7 @@ function SuccessContent() {
             {/* Header Content */}
             <div className="w-full flex justify-between items-start mb-8">
               <div className="space-y-1">
-                <h3 className="text-2xl font-black tracking-tighter text-zinc-900">ETHIOCODERS <span className="text-emerald-600">CERTIFY</span></h3>
+                <h3 className="text-2xl font-black tracking-tighter text-zinc-900">5M <span className="text-emerald-600">CERTIFICATE</span></h3>
                 <p className="text-[10px] uppercase font-black tracking-widest text-zinc-400">Official Generation System</p>
               </div>
               <div className="w-16 h-16 bg-zinc-900 text-white rounded-xl flex items-center justify-center shadow-lg">
@@ -135,7 +135,7 @@ function SuccessContent() {
               </div>
 
               <p className="text-sm md:text-lg font-medium text-zinc-600 max-w-xl mx-auto leading-relaxed px-4">
-                Has successfully completed the requirements for the <span className="text-emerald-600 font-bold">ETHIOCODERS DEVELOPMENT PROGRAM</span> and is hereby recognized as a certified developer.
+                Has successfully completed the requirements for the <span className="text-emerald-600 font-bold">5M CERTIFICATE DEVELOPMENT PROGRAM</span> and is hereby recognized as a certified developer.
               </p>
             </div>
 

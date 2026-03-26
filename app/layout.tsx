@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EthioCoders Certify Application",
-  description: "Advanced Automatic Certificate Generation System by EthioCoders",
+  title: "5M certificate Application",
+  description: "Advanced Automatic Certificate Generation System by 5M certificate",
   manifest: "/manifest.webmanifest",
   themeColor: "#0b1220",
 };
