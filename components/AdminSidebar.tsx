@@ -10,7 +10,8 @@ import {
   CreditCard,
   Award,
   Menu,
-  X
+  X,
+  Phone
 } from "lucide-react";
 import { auth } from "@/lib/firebase/config";
 import { useState, useEffect } from "react";
@@ -22,6 +23,7 @@ const menuItems = [
   { name: "Welcome Video", href: "/admin/welcome-video", icon: Video },
   { name: "Sample Certificate", href: "/admin/certificate", icon: Award },
   { name: "Payment Methods", href: "/admin/payment-methods", icon: CreditCard },
+  { name: "Telegram Link", href: "/admin/telegrams", icon: Phone },
 ];
 
 export default function AdminSidebar() {
