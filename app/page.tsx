@@ -92,12 +92,12 @@ export default function Home() {
           </Link>
         </div>
 
-        <h2 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 mb-6 leading-tight">
+        <h3 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 mb-6 leading-tight">
           Next Generation <br />
           <span className="bg-gradient-to-r from-emerald-500 to-emerald-700 bg-clip-text text-transparent">Automatic Certification</span>
-        </h2>
+        </h3>
 
-        <p className="max-w-2xl text-lg md:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed mb-5 sm:mb-7 font-medium">
+        <p className="w-full text-left text-lg md:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed mb-5 sm:mb-7 font-medium px-2">
           Automatically complete all questions, calculate your score, and instantly generate your certificate. Users who achieve <span className="font-black text-zinc-900 dark:text-zinc-50">95% and above</span> can directly download their official 5 Million Ethiopian Coders certificate. Simply complete the process, pay a small fee, and receive your fully generated certificate within <span className="font-black text-zinc-900 dark:text-zinc-50">5 minutes</span>—fast, secure, and hassle-free.
         </p>
 
