@@ -72,19 +72,19 @@ export default function Home() {
       </div>
 
       <main className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-6 pt-2 pb-16 md:pt-4 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000 relative z-10">
-        
+
         <div className="mb-8 animate-in fade-in zoom-in duration-1000 delay-300">
           <PwaInstallButton />
         </div>
 
         <div className="flex flex-row gap-3 justify-center w-full max-w-md mb-6 sm:mb-8">
-          <Link 
+          <Link
             href="/generate"
             className="h-14 sm:h-16 flex-1 px-3 sm:px-8 rounded-[1.2rem] sm:rounded-[1.5rem] bg-emerald-600 text-white font-black text-sm sm:text-lg hover:bg-emerald-700 hover:scale-105 transition-all shadow-2xl shadow-emerald-500/40 active:scale-95 flex items-center justify-center gap-3 text-center"
           >
             Start Generating
           </Link>
-          <Link 
+          <Link
             href="/verify"
             className="h-14 sm:h-16 flex-1 px-3 sm:px-8 rounded-[1.2rem] sm:rounded-[1.5rem] bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-bold text-sm sm:text-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:scale-105 transition-all active:scale-95 shadow-lg flex items-center justify-center text-center"
           >
@@ -98,7 +98,7 @@ export default function Home() {
         </h2>
 
         <p className="max-w-2xl text-lg md:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed mb-5 sm:mb-7 font-medium">
-          Empowering the future of 5M certificate with <span className="font-black text-zinc-900 dark:text-zinc-50">Secure, Transparent, and Automated</span> certificate generation.
+          Automatically complete all questions, calculate your score, and instantly generate your certificate. Users who achieve <span className="font-black text-zinc-900 dark:text-zinc-50">95% and above</span> can directly download their official 5 Million Ethiopian Coders certificate. Simply complete the process, pay a small fee, and receive your fully generated certificate within <span className="font-black text-zinc-900 dark:text-zinc-50">5 minutes</span>—fast, secure, and hassle-free.
         </p>
 
         <Footer />
