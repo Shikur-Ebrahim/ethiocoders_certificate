@@ -121,11 +121,11 @@ export default function Home() {
                <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full scale-0 group-hover/tg:scale-150 transition-transform duration-700" />
                
                {/* Premium Styled Icon Container */}
-               <div className="relative z-10 bg-white dark:bg-zinc-900 p-1.5 md:p-2 rounded-2xl md:rounded-[2rem] border-4 border-emerald-500/10 dark:border-emerald-500/20 shadow-2xl group-hover/tg:border-emerald-500/40 transition-all duration-500">
+               <div className="relative z-10 bg-white dark:bg-zinc-900 p-0 rounded-2xl md:rounded-[2rem] border-2 border-emerald-500/20 shadow-2xl group-hover/tg:border-emerald-500/50 transition-all duration-500 overflow-hidden w-16 h-16 md:w-24 md:h-24">
                  <img 
-                   src="/telegram_icon.png" 
+                   src="/telegram%20icon.jpg" 
                    alt="Telegram" 
-                   className="w-16 h-16 md:w-24 md:h-24 object-contain group-hover/tg:scale-110 group-hover/tg:-rotate-6 transition-all duration-500"
+                   className="w-full h-full object-cover group-hover/tg:scale-110 transition-all duration-500"
                  />
                </div>
             </Link>
