@@ -42,7 +42,7 @@ export default function Home() {
 
       {/* Welcome Video Hero Section - Subtly Curved & Bordered */}
       <div className="w-full px-1 pt-1 md:px-2 md:pt-2 relative overflow-hidden transition-all duration-700">
-        <div className="relative aspect-video w-full overflow-hidden rounded-xl md:rounded-2xl border border-zinc-200/50 dark:border-zinc-800/50 shadow-2xl bg-zinc-900 transition-all">
+        <div className="relative aspect-[16/10] md:aspect-video w-full overflow-hidden rounded-xl md:rounded-2xl border border-zinc-200/50 dark:border-zinc-800/50 shadow-2xl bg-zinc-900 transition-all">
           {isLoadingVideo ? (
             <div className="absolute inset-0 flex items-center justify-center bg-zinc-950">
               <Loader2 className="w-12 h-12 text-emerald-500 animate-spin" />
@@ -75,31 +75,31 @@ export default function Home() {
 
       <main className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-6 pt-2 pb-16 md:pt-4 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000 relative z-10">
 
-        <div className="mb-8 animate-in fade-in zoom-in duration-1000 delay-300">
+        <div className="mb-2 sm:mb-8 animate-in fade-in zoom-in duration-1000 delay-300 scale-90 sm:scale-100">
           <PwaInstallButton />
         </div>
 
-        <div className="flex flex-row gap-3 justify-center w-full max-w-md mb-6 sm:mb-8">
+        <div className="flex flex-row gap-2 sm:gap-3 justify-center w-full max-w-md mb-4 sm:mb-8">
           <Link
             href="/generate"
-            className="h-14 sm:h-16 flex-1 px-3 sm:px-8 rounded-[1.2rem] sm:rounded-[1.5rem] bg-emerald-600 text-white font-black text-sm sm:text-lg hover:bg-emerald-700 hover:scale-105 transition-all shadow-2xl shadow-emerald-500/40 active:scale-95 flex items-center justify-center gap-3 text-center"
+            className="h-12 sm:h-16 flex-1 px-3 sm:px-8 rounded-[1.2rem] sm:rounded-[1.5rem] bg-emerald-600 text-white font-black text-xs sm:text-lg hover:bg-emerald-700 hover:scale-105 transition-all shadow-2xl shadow-emerald-500/40 active:scale-95 flex items-center justify-center gap-2 sm:gap-3 text-center"
           >
             Start Generating
           </Link>
           <Link
             href="/verify"
-            className="h-14 sm:h-16 flex-1 px-3 sm:px-8 rounded-[1.2rem] sm:rounded-[1.5rem] bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-bold text-sm sm:text-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:scale-105 transition-all active:scale-95 shadow-lg flex items-center justify-center text-center"
+            className="h-12 sm:h-16 flex-1 px-3 sm:px-8 rounded-[1.2rem] sm:rounded-[1.5rem] bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-bold text-xs sm:text-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:scale-105 transition-all active:scale-95 shadow-lg flex items-center justify-center text-center"
           >
             Download Certificate
           </Link>
         </div>
 
-        <h3 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 mb-6 leading-tight">
+        <h3 className="text-xl md:text-6xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 mb-3 sm:mb-6 leading-tight">
           Next Generation <br />
           <span className="bg-gradient-to-r from-emerald-500 to-emerald-700 bg-clip-text text-transparent">Automatic Certification</span>
         </h3>
 
-        <p className="w-full text-left text-lg md:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed mb-5 sm:mb-7 font-medium px-2">
+        <p className="w-full text-left text-[12px] sm:text-sm md:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4 sm:mb-7 font-medium px-2">
           Automatically complete all questions, calculate your score, and instantly generate your certificate. Users who achieve <span className="font-black text-zinc-900 dark:text-zinc-50">95% and above</span> can directly download their official 5 Million Ethiopian Coders certificate. Simply complete the process, pay a small fee, and receive your fully generated certificate within <span className="font-black text-zinc-900 dark:text-zinc-50">5 minutes</span>—fast, secure, and hassle-free.
         </p>
 
