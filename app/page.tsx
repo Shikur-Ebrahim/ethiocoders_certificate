@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import { getHomeVideosServer } from "./admin/home-video/actions";
+import { getTelegramInfo } from "./admin/telegrams/actions";
 import { Loader2, Play } from "lucide-react";
 import { PwaInstallButton } from "@/components/PwaInstallButton";
 
@@ -14,6 +15,7 @@ type HomeVideo = {
 
 export default function Home() {
   const [homeVideo, setHomeVideo] = useState<HomeVideo | null>(null);
+  const [telegramUsername, setTelegramUsername] = useState("");
   const [isLoadingVideo, setIsLoadingVideo] = useState(true);
 
   useEffect(() => {
@@ -29,7 +31,17 @@ export default function Home() {
         setIsLoadingVideo(false);
       }
     }
+    async function loadTelegram() {
+      try {
+        const data = await getTelegramInfo();
+        if (data) setTelegramUsername(data.username);
+      } catch (err) {
+        console.error("Failed to load telegram info:", err);
+      }
+    }
+
     loadHomeVideo();
+    loadTelegram();
   }, []);
 
   return (
@@ -94,10 +106,31 @@ export default function Home() {
           </Link>
         </div>
 
-        <h3 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 mb-6 leading-tight">
-          Next Generation <br />
-          <span className="bg-gradient-to-r from-emerald-500 to-emerald-700 bg-clip-text text-transparent">Automatic Certification</span>
-        </h3>
+        <div className="w-full flex flex-row items-center justify-between gap-4 mb-6 text-left px-2">
+          <h3 className="text-3xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 leading-tight">
+            Next Generation <br />
+            <span className="bg-gradient-to-r from-emerald-500 to-emerald-700 bg-clip-text text-transparent underline decoration-emerald-500/20 underline-offset-8">Automatic Certification</span>
+          </h3>
+          
+          {telegramUsername && (
+            <Link 
+              href={`https://t.me/${telegramUsername}`}
+              target="_blank"
+              className="flex-shrink-0 group/tg relative"
+            >
+               <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full scale-0 group-hover/tg:scale-150 transition-transform duration-700" />
+               
+               {/* Premium Styled Icon Container */}
+               <div className="relative z-10 bg-white dark:bg-zinc-900 p-1.5 md:p-2 rounded-2xl md:rounded-[2rem] border-4 border-emerald-500/10 dark:border-emerald-500/20 shadow-2xl group-hover/tg:border-emerald-500/40 transition-all duration-500">
+                 <img 
+                   src="/telegram_icon.png" 
+                   alt="Telegram" 
+                   className="w-16 h-16 md:w-24 md:h-24 object-contain group-hover/tg:scale-110 group-hover/tg:-rotate-6 transition-all duration-500"
+                 />
+               </div>
+            </Link>
+          )}
+        </div>
 
         <p className="w-full text-left text-lg md:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed mb-5 sm:mb-7 font-medium px-2">
           Automatically complete all questions, calculate your score, and instantly generate your certificate. Users who achieve <span className="font-black text-zinc-900 dark:text-zinc-50">95% and above</span> can directly download their official 5 Million Ethiopian Coders certificate. Simply complete the process, pay a small fee, and receive your fully generated certificate within <span className="font-black text-zinc-900 dark:text-zinc-50">5 minutes</span>—fast, secure, and hassle-free.
