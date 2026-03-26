@@ -144,6 +144,7 @@ function PaymentContent() {
     setIsUploading(true);
 
     try {
+      const uniquePublicId = `proof_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       const signResponse = await fetch("/api/admin/cloudinary-sign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -151,6 +152,7 @@ function PaymentContent() {
           paramsToSign: {
             timestamp: Math.round(new Date().getTime() / 1000),
             folder: "payment_proofs",
+            public_id: uniquePublicId,
           }
         })
       });
@@ -163,6 +165,7 @@ function PaymentContent() {
       uploadData.append("timestamp", timestamp.toString());
       uploadData.append("signature", signature);
       uploadData.append("folder", "payment_proofs");
+      uploadData.append("public_id", uniquePublicId);
 
       const uploadResponse = await fetch(
         `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
