@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, 
   Video, 
@@ -28,6 +28,7 @@ const menuItems = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
 
@@ -103,6 +104,7 @@ export default function AdminSidebar() {
             onClick={() => {
               auth.signOut();
               setIsOpen(false);
+              router.push("/");
             }}
             className="w-full flex items-center gap-3 p-4 text-zinc-500 hover:text-rose-500 hover:bg-rose-500/10 rounded-2xl transition-all font-bold text-sm border border-transparent hover:border-rose-500/20"
           >
