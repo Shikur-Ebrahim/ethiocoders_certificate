@@ -8,6 +8,7 @@ import { Loader2, Play } from "lucide-react";
 
 type HomeVideo = {
   imageId: string;
+  url?: string;
 };
 
 export default function Home() {
@@ -48,7 +49,7 @@ export default function Home() {
           ) : homeVideo ? (
             <>
               <video
-                src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/video/upload/${homeVideo.imageId}`}
+                src={homeVideo.url || `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/video/upload/${homeVideo.imageId}`}
                 className="w-full h-full object-cover"
                 autoPlay
                 muted

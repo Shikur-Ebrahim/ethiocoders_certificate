@@ -14,6 +14,9 @@ export async function addWelcomeVideoServer({
   try {
     // Construct URLs using Cloudinary standard URL structure
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    if (!cloudName) {
+      throw new Error("NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME is not defined on the server.");
+    }
     const secureUrl = `https://res.cloudinary.com/${cloudName}/video/upload/${imageId}`;
 
     await addDoc(collection(db, "welcome_videos"), {
