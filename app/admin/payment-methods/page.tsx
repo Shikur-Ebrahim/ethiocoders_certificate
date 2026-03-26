@@ -67,10 +67,13 @@ export default function PaymentMethodsPage() {
     workerFee: "100",
   });
 
-  // Logo upload state
+  // Logo upload state - separate for bank and telebirr to avoid leakage
   const [isUploading, setIsUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [logoId, setLogoId] = useState("");
+  const [bankPreviewUrl, setBankPreviewUrl] = useState<string | null>(null);
+  const [bankLogoId, setBankLogoId] = useState("");
+  const [telebirrPreviewUrl, setTelebirrPreviewUrl] = useState<string | null>(null);
+  const [telebirrLogoId, setTelebirrLogoId] = useState("");
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -111,7 +114,11 @@ export default function PaymentMethodsPage() {
     if (!file) return;
 
     const localUrl = URL.createObjectURL(file);
-    setPreviewUrl(localUrl);
+    if (activeTab === "bank") {
+      setBankPreviewUrl(localUrl);
+    } else {
+      setTelebirrPreviewUrl(localUrl);
+    }
     setIsUploading(true);
 
     try {
@@ -142,14 +149,25 @@ export default function PaymentMethodsPage() {
 
       const data = await uploadResponse.json();
       if (data.public_id) {
-        setLogoId(data.public_id);
+        // Embed the version string to force a unique URL, bypassing browser/Next.js cache
+        const uniqueLogoId = data.version ? `v${data.version}/${data.public_id}` : data.public_id;
+        
+        if (activeTab === "bank") {
+          setBankLogoId(uniqueLogoId);
+        } else {
+          setTelebirrLogoId(uniqueLogoId);
+        }
       } else {
         throw new Error("Logo upload failed");
       }
     } catch (error) {
       console.error("Logo upload error:", error);
       alert("Failed to upload logo");
-      setPreviewUrl(null);
+      if (activeTab === "bank") {
+        setBankPreviewUrl(null);
+      } else {
+        setTelebirrPreviewUrl(null);
+      }
     } finally {
       setIsUploading(false);
     }
@@ -157,8 +175,12 @@ export default function PaymentMethodsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!logoId) {
-      alert("Please upload a logo first");
+    if (activeTab === "bank" && !bankLogoId) {
+      alert("Please upload a bank logo first");
+      return;
+    }
+    if (activeTab === "telebirr" && !telebirrLogoId) {
+      alert("Please upload a telebirr logo first");
       return;
     }
 
@@ -170,13 +192,13 @@ export default function PaymentMethodsPage() {
         holderName: formData.holderName,
         accountNumber: formData.accountNumber,
         workerFee: Number(formData.workerFee) || 0,
-        logoId,
+        logoId: bankLogoId,
       } : {
         type: "telebirr",
         holderName: formData.holderName,
         phoneNumber: formData.phoneNumber,
         workerFee: Number(formData.workerFee) || 0,
-        logoId,
+        logoId: telebirrLogoId,
       };
 
       if (editingId) {
@@ -188,8 +210,10 @@ export default function PaymentMethodsPage() {
       }
 
       setFormData({ bankName: "", holderName: "", accountNumber: "", phoneNumber: "", workerFee: "100" });
-      setPreviewUrl(null);
-      setLogoId("");
+      setBankPreviewUrl(null);
+      setBankLogoId("");
+      setTelebirrPreviewUrl(null);
+      setTelebirrLogoId("");
       setEditingId(null);
       loadMethods();
     } catch {
@@ -209,8 +233,13 @@ export default function PaymentMethodsPage() {
       phoneNumber: method.phoneNumber || "",
       workerFee: method.workerFee?.toString() || "100",
     });
-    setLogoId(method.logoId);
-    setPreviewUrl(`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${method.logoId}`);
+    if (method.type === "bank") {
+      setBankLogoId(method.logoId);
+      setBankPreviewUrl(`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${method.logoId}`);
+    } else {
+      setTelebirrLogoId(method.logoId);
+      setTelebirrPreviewUrl(`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${method.logoId}`);
+    }
   };
 
   const handleToggleStatus = async (id: string, currentStatus: string) => {
@@ -253,8 +282,10 @@ export default function PaymentMethodsPage() {
                   <button
                     onClick={() => {
                       if (!editingId) {
-                        setLogoId("");
-                        setPreviewUrl(null);
+                        setBankLogoId("");
+                        setBankPreviewUrl(null);
+                        setTelebirrLogoId("");
+                        setTelebirrPreviewUrl(null);
                       }
                       setActiveTab("bank");
                     }}
@@ -267,13 +298,15 @@ export default function PaymentMethodsPage() {
                   <button
                     onClick={() => {
                       if (!editingId) {
-                        setLogoId("");
-                        setPreviewUrl(null);
+                        setBankLogoId("");
+                        setBankPreviewUrl(null);
+                        setTelebirrLogoId("");
+                        setTelebirrPreviewUrl(null);
                       }
                       setActiveTab("telebirr");
                     }}
                     className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${
-                      activeTab === "telebirr" ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm" : "text-zinc-500 hover:text-zinc-700"
+                      activeTab === "telebirr" ? "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-sm" : "text-zinc-500 hover:text-zinc-700"
                     }`}
                   >
                     Telebirr
@@ -284,12 +317,18 @@ export default function PaymentMethodsPage() {
                   {/* Logo Upload */}
                   <div className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 mb-4 transition-all hover:border-emerald-500/30">
                     <div className="relative w-20 h-20 mb-3 rounded-xl overflow-hidden bg-white dark:bg-black border border-zinc-100 dark:border-zinc-800 flex items-center justify-center">
-                      {previewUrl ? (
-                        <Image src={previewUrl} alt="Preview" fill className={`object-contain p-1 ${isUploading ? 'opacity-40' : ''}`} />
-                      ) : activeTab === "telebirr" ? (
-                        <Phone className="w-8 h-8 text-zinc-300" />
+                      {activeTab === "bank" ? (
+                        bankPreviewUrl ? (
+                          <Image src={bankPreviewUrl} alt="Preview" fill className={`object-contain p-1 ${isUploading ? 'opacity-40' : ''}`} />
+                        ) : (
+                          <Building2 className="w-8 h-8 text-zinc-300" />
+                        )
                       ) : (
-                        <Building2 className="w-8 h-8 text-zinc-300" />
+                        telebirrPreviewUrl ? (
+                          <Image src={telebirrPreviewUrl} alt="Preview" fill className={`object-contain p-1 ${isUploading ? 'opacity-40' : ''}`} />
+                        ) : (
+                          <Phone className="w-8 h-8 text-zinc-300" />
+                        )
                       )}
                       {isUploading && <Loader2 className="absolute w-6 h-6 text-emerald-500 animate-spin" />}
                     </div>
@@ -300,14 +339,19 @@ export default function PaymentMethodsPage() {
                         className="text-[10px] font-black uppercase text-emerald-500 hover:text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all"
                       >
                         <Upload className="w-3 h-3" />
-                        {previewUrl ? "Change" : "Upload"} Logo
+                        {activeTab === "bank" ? (bankPreviewUrl ? "Change" : "Upload") : (telebirrPreviewUrl ? "Change" : "Upload")} Logo
                       </button>
-                      {previewUrl && (
+                      {(activeTab === "bank" ? bankPreviewUrl : telebirrPreviewUrl) && (
                         <button
                           type="button"
                           onClick={() => {
-                            setPreviewUrl(null);
-                            setLogoId("");
+                            if (activeTab === "bank") {
+                              setBankPreviewUrl(null);
+                              setBankLogoId("");
+                            } else {
+                              setTelebirrPreviewUrl(null);
+                              setTelebirrLogoId("");
+                            }
                             if (fileInputRef.current) fileInputRef.current.value = "";
                           }}
                           className="text-[10px] font-black uppercase text-rose-500 hover:text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all"
@@ -406,8 +450,10 @@ export default function PaymentMethodsPage() {
                       onClick={() => {
                         setEditingId(null);
                         setFormData({ bankName: "", holderName: "", accountNumber: "", phoneNumber: "", workerFee: "100" });
-                        setPreviewUrl(null);
-                        setLogoId("");
+                        setBankPreviewUrl(null);
+                        setBankLogoId("");
+                        setTelebirrPreviewUrl(null);
+                        setTelebirrLogoId("");
                       }}
                       className="w-full py-3 mt-2 rounded-xl font-bold text-xs text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all"
                     >
