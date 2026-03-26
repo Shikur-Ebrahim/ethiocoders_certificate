@@ -251,7 +251,13 @@ export default function PaymentMethodsPage() {
               <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] p-6 shadow-xl relative overflow-hidden backdrop-blur-xl">
                 <div className="flex gap-2 mb-6 p-1 bg-zinc-100 dark:bg-zinc-900 rounded-2xl">
                   <button
-                    onClick={() => setActiveTab("bank")}
+                    onClick={() => {
+                      if (!editingId) {
+                        setLogoId("");
+                        setPreviewUrl(null);
+                      }
+                      setActiveTab("bank");
+                    }}
                     className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${
                       activeTab === "bank" ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm" : "text-zinc-500 hover:text-zinc-700"
                     }`}
@@ -259,7 +265,13 @@ export default function PaymentMethodsPage() {
                     Bank
                   </button>
                   <button
-                    onClick={() => setActiveTab("telebirr")}
+                    onClick={() => {
+                      if (!editingId) {
+                        setLogoId("");
+                        setPreviewUrl(null);
+                      }
+                      setActiveTab("telebirr");
+                    }}
                     className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${
                       activeTab === "telebirr" ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm" : "text-zinc-500 hover:text-zinc-700"
                     }`}
@@ -281,15 +293,41 @@ export default function PaymentMethodsPage() {
                       )}
                       {isUploading && <Loader2 className="absolute w-6 h-6 text-emerald-500 animate-spin" />}
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="text-xs font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1.5"
-                    >
-                      <Upload className="w-3.5 h-3.5" />
-                      {previewUrl ? "Change Logo" : "Upload Logo"}
-                    </button>
-                    <input ref={fileInputRef} type="file" className="hidden" onChange={handleLogoUpload} accept="image/*" />
+                    <div className="flex gap-4">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="text-[10px] font-black uppercase text-emerald-500 hover:text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all"
+                      >
+                        <Upload className="w-3 h-3" />
+                        {previewUrl ? "Change" : "Upload"} Logo
+                      </button>
+                      {previewUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPreviewUrl(null);
+                            setLogoId("");
+                            if (fileInputRef.current) fileInputRef.current.value = "";
+                          }}
+                          className="text-[10px] font-black uppercase text-rose-500 hover:text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                    <input 
+                      ref={fileInputRef} 
+                      type="file" 
+                      className="hidden" 
+                      onChange={(e) => {
+                        handleLogoUpload(e);
+                        // Reset input so the same file can be selected again if needed
+                        if (e.target) e.target.value = "";
+                      }} 
+                      accept="image/*" 
+                    />
                   </div>
 
                   {activeTab === "bank" && (
