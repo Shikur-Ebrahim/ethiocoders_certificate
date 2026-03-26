@@ -97,11 +97,11 @@ export default function WelcomeVideoPage() {
         <div className="flex min-h-screen bg-zinc-950 font-sans">
             <AdminSidebar />
             
-            <main className="flex-1 py-12 px-4 overflow-y-auto">
+            <main className="flex-1 py-12 px-4 sm:px-6 overflow-y-auto w-full">
                 <div className="max-w-xl mx-auto">
-                    <div className="text-center mb-10">
-                        <h1 className="text-4xl font-black text-white tracking-tight mb-3">Welcome Video</h1>
-                        <p className="text-slate-400 font-medium">Upload and set the introduction video for new users.</p>
+                    <div className="text-center mb-8 md:mb-10 pt-12 lg:pt-0">
+                        <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-3">Welcome Video</h1>
+                        <p className="text-slate-400 text-sm md:text-base font-medium">Upload and set the introduction video for new users.</p>
                     </div>
 
                     <div className="bg-slate-900/60 border border-slate-800 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden backdrop-blur-xl">

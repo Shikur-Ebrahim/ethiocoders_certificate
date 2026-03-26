@@ -132,14 +132,14 @@ export default function AdminCertificatePage() {
         <div className="flex min-h-screen bg-zinc-950 font-sans">
             <AdminSidebar />
             
-            <main className="flex-1 py-12 px-4 overflow-y-auto">
+            <main className="flex-1 py-8 md:py-12 px-4 sm:px-6 overflow-y-auto w-full">
                 <div className="max-w-xl mx-auto">
-                    <div className="text-center mb-10">
-                        <div className="inline-flex items-center justify-center p-3 bg-emerald-500/10 rounded-2xl mb-4 border border-emerald-500/20">
-                            <Award className="h-8 w-8 text-emerald-500" />
+                    <div className="text-center mb-8 md:mb-10 pt-12 lg:pt-0">
+                        <div className="inline-flex items-center justify-center p-2.5 bg-emerald-500/10 rounded-2xl mb-4 border border-emerald-500/20">
+                            <Award className="h-6 w-6 md:h-8 md:w-8 text-emerald-500" />
                         </div>
-                        <h1 className="text-4xl font-black text-white tracking-tight mb-3">Sample Certificate</h1>
-                        <p className="text-slate-400 font-medium">Manage the reference image used for certificate generation.</p>
+                        <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-3">Sample Certificate</h1>
+                        <p className="text-slate-400 text-sm md:text-base font-medium">Manage the reference image used for certificate generation.</p>
                     </div>
 
                     <div className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden backdrop-blur-xl">

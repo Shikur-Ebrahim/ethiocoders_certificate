@@ -69,23 +69,23 @@ export default function AdminApplicationsPage() {
   return (
     <div className="flex min-h-screen bg-zinc-950 font-sans">
       <AdminSidebar />
-      <main className="flex-1 py-12 px-6 overflow-y-auto w-full">
+      <main className="flex-1 overflow-y-auto w-full px-4 sm:px-6 py-8 md:py-12">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="mb-10 flex items-center justify-between">
+          <div className="mb-8 md:mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 pt-12 lg:pt-0">
             <div>
-              <div className="inline-flex items-center justify-center p-3 bg-blue-500/10 rounded-2xl mb-4 border border-blue-500/20">
-                <Award className="h-8 w-8 text-blue-500" />
+              <div className="inline-flex items-center justify-center p-2.5 bg-blue-500/10 rounded-2xl mb-4 border border-blue-500/20">
+                <Award className="h-6 w-6 md:h-8 md:w-8 text-blue-500" />
               </div>
-              <h1 className="text-4xl font-black text-white tracking-tight mb-2">Applications</h1>
-              <p className="text-slate-400 font-medium tracking-wide">Manage and review all student certificate applications.</p>
+              <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-2">Applications</h1>
+              <p className="text-slate-400 text-sm md:text-base font-medium tracking-wide">Manage and review all student certificate applications.</p>
             </div>
             
-            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl px-8 py-5 flex flex-col items-center justify-center backdrop-blur-sm shadow-xl">
-                <div className="text-4xl font-black text-white tracking-tighter">
+            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl px-6 py-4 md:px-8 md:py-5 flex flex-col items-center justify-center backdrop-blur-sm shadow-xl self-start sm:self-auto">
+                <div className="text-3xl md:text-4xl font-black text-white tracking-tighter">
                     {isLoading ? <Loader2 className="w-8 h-8 animate-spin text-blue-500" /> : applications.length}
                 </div>
-                <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-2">Total Submissions</div>
+                <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1 md:mt-2">Total Submissions</div>
             </div>
           </div>
 

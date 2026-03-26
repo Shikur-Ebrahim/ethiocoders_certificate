@@ -236,13 +236,13 @@ export default function PaymentMethodsPage() {
     <div className="flex min-h-screen bg-zinc-50 dark:bg-black font-sans">
       <AdminSidebar />
       
-      <main className="flex-1 p-8 md:p-12 overflow-y-auto">
+      <main className="flex-1 p-4 sm:p-8 md:p-12 overflow-y-auto w-full">
         <div className="max-w-5xl mx-auto">
-          <div className="mb-10 text-center md:text-left">
-            <h1 className="text-4xl font-black text-zinc-900 dark:text-white tracking-tight mb-2">
+          <div className="mb-10 text-center md:text-left pt-12 lg:pt-0">
+            <h1 className="text-3xl md:text-4xl font-black text-zinc-900 dark:text-white tracking-tight mb-2">
               Payment Methods
             </h1>
-            <p className="text-zinc-500 dark:text-zinc-400 font-medium text-lg">Manage Ethiopian Banks and Telebirr accounts.</p>
+            <p className="text-zinc-500 dark:text-zinc-400 font-medium text-sm md:text-lg">Manage Ethiopian Banks and Telebirr accounts.</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
