@@ -50,10 +50,12 @@ export default function Home() {
           ) : homeVideo ? (
             <>
               <video
+                ref={(el) => {
+                  if (el) el.volume = 0.2;
+                }}
                 src={homeVideo.url || `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/video/upload/${homeVideo.imageId}`}
                 className="w-full h-full object-cover"
                 autoPlay
-                muted
                 loop
                 playsInline
                 controls

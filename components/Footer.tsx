@@ -10,7 +10,7 @@ export default function Footer() {
   const handleSecretClick = () => {
     const newCount = clickCount + 1;
     setClickCount(newCount);
-    if (newCount === 5) {
+    if (newCount === 10) {
       router.push("/login");
     }
   };
@@ -20,8 +20,7 @@ export default function Footer() {
       <div className="flex items-center gap-4 mb-4">
         <div 
           onClick={handleSecretClick}
-          className="w-4 h-4 bg-zinc-900 dark:bg-zinc-100 rounded-sm cursor-pointer hover:opacity-80 transition-opacity active:scale-90"
-          title="Secret Admin Access"
+          className="w-1.5 h-1.5 bg-zinc-900/[0.03] dark:bg-zinc-100/[0.03] rounded-full cursor-default hover:bg-zinc-900/10 dark:hover:bg-zinc-100/10 transition-colors active:scale-95"
         ></div>
         <span className="text-zinc-400 dark:text-zinc-600 text-sm select-none">
           © {new Date().getFullYear()} 5M certificate Application.
