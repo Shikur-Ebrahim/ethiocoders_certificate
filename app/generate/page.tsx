@@ -187,23 +187,6 @@ export default function GeneratePage() {
                 </div>
 
 
-                {/* Status Specific Fields */}
-                {status === "Not a Student" && (
-                  <div className="space-y-2 md:col-span-2">
-                    <label className="text-xs font-bold text-zinc-400 ml-1">Email Address</label>
-                    <div className="relative">
-                      <input
-                        type="email"
-                        name="email"
-                        required
-                        placeholder="your@email.com"
-                        onChange={handleInputChange}
-                        className="w-full h-12 md:h-14 px-12 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-emerald-500 outline-none transition-all font-medium text-sm md:text-base"
-                      />
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 md:w-5 h-4 md:h-5 text-zinc-400" />
-                    </div>
-                  </div>
-                )}
 
                 {status === "High School Student" && (
                   <>
