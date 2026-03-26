@@ -25,9 +25,21 @@ export async function getAllApplications() {
       return {
         id: doc.id,
         ...data,
-        createdAt: data.createdAt?.toMillis ? data.createdAt.toMillis() : Date.now(),
+        createdAt: data.createdAt?.toMillis ? data.createdAt.toMillis() : (data.createdAt || Date.now()),
         paidAt: data.paidAt?.toMillis ? data.paidAt.toMillis() : null,
       };
+    });
+
+    // Custom sort: 'pending' first, then sort all by createdAt descending
+    apps.sort((a: any, b: any) => {
+      const isAPending = a.status === 'pending';
+      const isBPending = b.status === 'pending';
+      
+      if (isAPending && !isBPending) return -1;
+      if (!isAPending && isBPending) return 1;
+      
+      // Secondary sort: createdAt descending
+      return (b.createdAt || 0) - (a.createdAt || 0);
     });
 
     return apps as AdminApplication[];
