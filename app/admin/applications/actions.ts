@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/firebase/config";
-import { collection, getDocs, query, orderBy, doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, doc, updateDoc, getDoc, deleteDoc, where } from "firebase/firestore";
 import { Application } from "@/app/generate/actions";
 
 export interface AdminApplication extends Application {
@@ -34,6 +34,20 @@ export async function getAllApplications() {
   } catch (error) {
     console.error("Error fetching applications:", error);
     return [];
+  }
+}
+
+export async function getPendingCount() {
+  try {
+    const q = query(
+      collection(db, "applications"),
+      where("status", "==", "pending")
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.size;
+  } catch (error) {
+    console.error("Error fetching pending count:", error);
+    return 0;
   }
 }
 

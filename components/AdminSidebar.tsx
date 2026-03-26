@@ -13,7 +13,8 @@ import {
   X
 } from "lucide-react";
 import { auth } from "@/lib/firebase/config";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getPendingCount } from "@/app/admin/applications/actions";
 
 const menuItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -26,6 +27,15 @@ const menuItems = [
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      const count = await getPendingCount();
+      setPendingCount(count);
+    };
+    fetchCount();
+  }, [pathname]); // Refresh on navigation to show latest state
 
   return (
     <>
@@ -74,6 +84,11 @@ export default function AdminSidebar() {
                 <div className="flex items-center gap-3">
                   <item.icon className={`w-5 h-5 ${isActive ? "text-emerald-500" : "group-hover:text-emerald-500"}`} />
                   <span className="font-bold text-sm tracking-tight">{item.name}</span>
+                  {item.name === "Applications" && pendingCount > 0 && (
+                    <span className="flex items-center justify-center min-w-[1.25rem] h-5 px-1 bg-emerald-500 text-white text-[10px] font-black rounded-full animate-in zoom-in duration-300">
+                      {pendingCount}
+                    </span>
+                  )}
                 </div>
                 {isActive && <ChevronRight className="w-4 h-4" />}
               </Link>
