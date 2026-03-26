@@ -40,7 +40,9 @@ type PaymentMethod = {
   status?: string;
 };
 
-export default function PaymentPage() {
+import { Suspense } from "react";
+
+function PaymentContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const applicationIdFromUrl = searchParams.get("id");
@@ -488,11 +490,19 @@ export default function PaymentPage() {
 
           </div>
         )}
-
-
-
-
       </div>
     </div>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-zinc-50 dark:bg-black flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-emerald-500 animate-spin" />
+      </div>
+    }>
+      <PaymentContent />
+    </Suspense>
   );
 }

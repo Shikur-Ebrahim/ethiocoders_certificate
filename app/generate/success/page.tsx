@@ -17,7 +17,9 @@ import Link from "next/link";
 import { getApplication, type Application } from "../actions";
 
 
-export default function SuccessPage() {
+import { Suspense } from "react";
+
+function SuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const id = searchParams.get("id");
@@ -206,5 +208,17 @@ export default function SuccessPage() {
         }
       ` }} />
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-zinc-50 dark:bg-black flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-emerald-500 animate-spin" />
+      </div>
+    }>
+      <SuccessContent />
+    </Suspense>
   );
 }
