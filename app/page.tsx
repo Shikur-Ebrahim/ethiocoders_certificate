@@ -5,6 +5,7 @@ import Link from "next/link";
 import Footer from "@/components/Footer";
 import { getHomeVideosServer } from "./admin/home-video/actions";
 import { Loader2, Play } from "lucide-react";
+import { PwaInstallButton } from "@/components/PwaInstallButton";
 
 type HomeVideo = {
   imageId: string;
@@ -71,6 +72,10 @@ export default function Home() {
       </div>
 
       <main className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-6 pt-2 pb-16 md:pt-4 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000 relative z-10">
+        
+        <div className="mb-8 animate-in fade-in zoom-in duration-1000 delay-300">
+          <PwaInstallButton />
+        </div>
 
         <div className="flex flex-row gap-3 justify-center w-full max-w-md mb-6 sm:mb-8">
           <Link 
