@@ -38,6 +38,8 @@ type PaymentMethod = {
   workerFee?: number;
   logoId?: string;
   status?: string;
+  createdAt?: number;
+  updatedAt?: number | null;
 };
 
 import { Suspense } from "react";
@@ -65,6 +67,20 @@ function PaymentContent() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [copied, setCopied] = useState(false);
+
+  const normalizeMethodType = (raw: Record<string, unknown>): PaymentMethodType => {
+    const rawType = raw.type;
+    const hasBankShape = Boolean(raw.bankName) || Boolean(raw.accountNumber);
+    const hasTelebirrShape = Boolean(raw.phoneNumber);
+
+    if (rawType === "bank" || rawType === "telebirr") {
+      if (rawType === "telebirr" && hasBankShape && !hasTelebirrShape) return "bank";
+      if (rawType === "bank" && hasTelebirrShape && !hasBankShape) return "telebirr";
+      return rawType;
+    }
+
+    return hasBankShape ? "bank" : "telebirr";
+  };
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -95,10 +111,14 @@ function PaymentContent() {
 
       const methodsRaw = await getPaymentMethods();
       const methods = (methodsRaw as unknown as Array<Record<string, unknown>>).map((m) => {
-        const rawType = m.type;
-        const type: PaymentMethodType = rawType === "telebirr" ? "telebirr" : "bank";
+        const type = normalizeMethodType(m);
         const workerFeeRaw = m.workerFee;
         const workerFee = typeof workerFeeRaw === "number" ? workerFeeRaw : Number(workerFeeRaw ?? 0);
+        const createdAtRaw = m.createdAt;
+        const updatedAtRaw = m.updatedAt;
+        const createdAt = typeof createdAtRaw === "number" ? createdAtRaw : Number(createdAtRaw ?? 0);
+        const updatedAt =
+          typeof updatedAtRaw === "number" ? updatedAtRaw : updatedAtRaw == null ? null : Number(updatedAtRaw);
 
         return {
           id: String(m.id ?? ""),
@@ -110,10 +130,25 @@ function PaymentContent() {
           workerFee: Number.isFinite(workerFee) ? workerFee : 0,
           logoId: (m.logoId as string | undefined) ?? undefined,
           status: (m.status as string | undefined) ?? undefined,
+          createdAt: Number.isFinite(createdAt) ? createdAt : 0,
+          updatedAt: updatedAt !== null && Number.isFinite(updatedAt) ? updatedAt : null,
         } satisfies PaymentMethod;
       });
 
-      setPaymentMethods(methods.filter((m) => m.status === "active"));
+      const activeMethods = methods.filter((m) => m.status === "active");
+      const byType = new Map<PaymentMethodType, PaymentMethod>();
+      for (const method of activeMethods) {
+        const existing = byType.get(method.type);
+        if (!existing) {
+          byType.set(method.type, method);
+          continue;
+        }
+        const methodTs = method.updatedAt ?? method.createdAt ?? 0;
+        const existingTs = existing.updatedAt ?? existing.createdAt ?? 0;
+        if (methodTs > existingTs) byType.set(method.type, method);
+      }
+
+      setPaymentMethods(Array.from(byType.values()));
       
       setIsLoading(false);
 
