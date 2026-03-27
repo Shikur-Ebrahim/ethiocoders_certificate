@@ -82,6 +82,17 @@ function PaymentContent() {
     return hasBankShape ? "bank" : "telebirr";
   };
 
+  const getPaymentLogoSrc = (method: PaymentMethod): string | null => {
+    if (!method.logoId) return null;
+    const logoLower = method.logoId.toLowerCase();
+
+    // Prevent cross-type logo leakage from legacy/bad records.
+    if (method.type === "bank" && logoLower.includes("telebirr")) return null;
+    if (method.type === "telebirr" && logoLower.includes("bank")) return null;
+
+    return `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${method.logoId}?method=${method.id}&type=${method.type}`;
+  };
+
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -401,8 +412,15 @@ function PaymentContent() {
                     }`}
                   >
                     <div className="w-12 h-12 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex-shrink-0 relative overflow-hidden flex items-center justify-center p-1.5 shadow-sm">
-                      {method.logoId ? (
-                        <Image src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${method.logoId}`} alt="Logo" fill className="object-contain p-1" />
+                      {getPaymentLogoSrc(method) ? (
+                        <Image
+                          key={`${method.id}-${method.logoId}`}
+                          src={getPaymentLogoSrc(method) as string}
+                          alt={`${method.type} logo`}
+                          fill
+                          className="object-contain p-1"
+                          unoptimized
+                        />
                       ) : (
                         method.type === "telebirr" ? <Phone className="w-6 h-6 text-zinc-300" /> : <Building2 className="w-6 h-6 text-zinc-300" />
                       )}
