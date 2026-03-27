@@ -57,6 +57,7 @@ export default function PaymentMethodsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingType, setEditingType] = useState<PaymentMethodType | null>(null);
 
   // Form states
   const [formData, setFormData] = useState({
@@ -79,6 +80,16 @@ export default function PaymentMethodsPage() {
   useEffect(() => {
     loadMethods();
   }, []);
+
+  const resetForm = () => {
+    setFormData({ bankName: "", holderName: "", accountNumber: "", phoneNumber: "", workerFee: "100" });
+    setBankPreviewUrl(null);
+    setBankLogoId("");
+    setTelebirrPreviewUrl(null);
+    setTelebirrLogoId("");
+    setEditingId(null);
+    setEditingType(null);
+  };
 
   const loadMethods = async () => {
     setIsLoading(true);
@@ -112,9 +123,10 @@ export default function PaymentMethodsPage() {
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const targetType = activeTab;
 
     const localUrl = URL.createObjectURL(file);
-    if (activeTab === "bank") {
+    if (targetType === "bank") {
       setBankPreviewUrl(localUrl);
     } else {
       setTelebirrPreviewUrl(localUrl);
@@ -122,7 +134,7 @@ export default function PaymentMethodsPage() {
     setIsUploading(true);
 
     try {
-      const uniquePublicId = `${activeTab}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const uniquePublicId = `${targetType}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       
       const signResponse = await fetch("/api/admin/cloudinary-sign", {
         method: "POST",
@@ -156,7 +168,7 @@ export default function PaymentMethodsPage() {
         // Embed the version string to force a unique URL, bypassing browser/Next.js cache
         const uniqueLogoId = data.version ? `v${data.version}/${data.public_id}` : data.public_id;
         
-        if (activeTab === "bank") {
+        if (targetType === "bank") {
           setBankLogoId(uniqueLogoId);
         } else {
           setTelebirrLogoId(uniqueLogoId);
@@ -167,7 +179,7 @@ export default function PaymentMethodsPage() {
     } catch (error) {
       console.error("Logo upload error:", error);
       alert("Failed to upload logo");
-      if (activeTab === "bank") {
+      if (targetType === "bank") {
         setBankPreviewUrl(null);
       } else {
         setTelebirrPreviewUrl(null);
@@ -179,18 +191,20 @@ export default function PaymentMethodsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (activeTab === "bank" && !bankLogoId) {
+    const formType: PaymentMethodType = editingType ?? activeTab;
+
+    if (formType === "bank" && !bankLogoId) {
       alert("Please upload a bank logo first");
       return;
     }
-    if (activeTab === "telebirr" && !telebirrLogoId) {
+    if (formType === "telebirr" && !telebirrLogoId) {
       alert("Please upload a telebirr logo first");
       return;
     }
 
     setIsSaving(true);
     try {
-      const methodData = activeTab === "bank" ? {
+      const methodData = formType === "bank" ? {
         type: "bank",
         bankName: formData.bankName,
         holderName: formData.holderName,
@@ -213,12 +227,7 @@ export default function PaymentMethodsPage() {
         alert("Payment method added!");
       }
 
-      setFormData({ bankName: "", holderName: "", accountNumber: "", phoneNumber: "", workerFee: "100" });
-      setBankPreviewUrl(null);
-      setBankLogoId("");
-      setTelebirrPreviewUrl(null);
-      setTelebirrLogoId("");
-      setEditingId(null);
+      resetForm();
       loadMethods();
     } catch {
       alert("Failed to save payment method");
@@ -230,6 +239,7 @@ export default function PaymentMethodsPage() {
   const handleEdit = (method: PaymentMethod) => {
     setEditingId(method.id);
     setActiveTab(method.type as PaymentMethodType);
+    setEditingType(method.type as PaymentMethodType);
     setFormData({
       bankName: method.bankName || "",
       holderName: method.holderName || "",
@@ -240,9 +250,13 @@ export default function PaymentMethodsPage() {
     if (method.type === "bank") {
       setBankLogoId(method.logoId);
       setBankPreviewUrl(`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${method.logoId}`);
+      setTelebirrLogoId("");
+      setTelebirrPreviewUrl(null);
     } else {
       setTelebirrLogoId(method.logoId);
       setTelebirrPreviewUrl(`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${method.logoId}`);
+      setBankLogoId("");
+      setBankPreviewUrl(null);
     }
   };
 
@@ -285,6 +299,7 @@ export default function PaymentMethodsPage() {
                 <div className="flex gap-2 mb-6 p-1 bg-zinc-100 dark:bg-zinc-900 rounded-2xl">
                   <button
                     onClick={() => {
+                      if (editingId) return;
                       if (!editingId) {
                         setBankLogoId("");
                         setBankPreviewUrl(null);
@@ -301,6 +316,7 @@ export default function PaymentMethodsPage() {
                   </button>
                   <button
                     onClick={() => {
+                      if (editingId) return;
                       if (!editingId) {
                         setBankLogoId("");
                         setBankPreviewUrl(null);
@@ -452,12 +468,7 @@ export default function PaymentMethodsPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setEditingId(null);
-                        setFormData({ bankName: "", holderName: "", accountNumber: "", phoneNumber: "", workerFee: "100" });
-                        setBankPreviewUrl(null);
-                        setBankLogoId("");
-                        setTelebirrPreviewUrl(null);
-                        setTelebirrLogoId("");
+                        resetForm();
                       }}
                       className="w-full py-3 mt-2 rounded-xl font-bold text-xs text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all"
                     >
