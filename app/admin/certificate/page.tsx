@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Award, Loader2, Upload, CheckCircle, RefreshCw, Eye } from "lucide-react";
+import { Award, Loader2, Upload, CheckCircle, RefreshCw, Eye, Download } from "lucide-react";
 import { getSampleCertificate, saveSampleCertificate } from "./actions";
 import AdminSidebar from "@/components/AdminSidebar";
 import Image from "next/image";
@@ -128,6 +128,26 @@ export default function AdminCertificatePage() {
 
     const displayUrl = previewUrl || (publicId ? `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${publicId}` : null);
 
+    const handleDownload = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!displayUrl) return;
+        
+        const downloadLink = document.createElement("a");
+        if (previewUrl) {
+            downloadLink.href = previewUrl;
+            downloadLink.download = "sample-certificate.png";
+        } else if (publicId) {
+            downloadLink.href = `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/fl_attachment/${publicId}`;
+            downloadLink.target = "_blank";
+        } else {
+            return;
+        }
+        
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    };
+
     return (
         <div className="flex min-h-screen bg-zinc-950 font-sans">
             <AdminSidebar />
@@ -188,12 +208,19 @@ export default function AdminCertificatePage() {
                                             )}
                                             
                                             {!isUploading && !isSaving && (
-                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all bg-black/60 backdrop-blur-sm">
+                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all bg-black/60 backdrop-blur-sm gap-6">
                                                     <div className="flex flex-col items-center">
                                                         <div className="h-14 w-14 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white backdrop-blur-md border border-white/20 mb-3 transition-all scale-90 group-hover:scale-100">
                                                             <RefreshCw className="h-6 w-6" />
                                                         </div>
-                                                        <span className="text-[10px] text-white font-black uppercase tracking-wider">Change Certificate</span>
+                                                        <span className="text-[10px] text-white font-black uppercase tracking-wider">Change</span>
+                                                    </div>
+                                                    
+                                                    <div className="flex flex-col items-center" onClick={handleDownload}>
+                                                        <div className="h-14 w-14 bg-white/10 hover:bg-emerald-500/80 rounded-full flex items-center justify-center text-white backdrop-blur-md border border-white/20 mb-3 transition-all scale-90 group-hover:scale-100 shadow-lg">
+                                                            <Download className="h-6 w-6" />
+                                                        </div>
+                                                        <span className="text-[10px] text-white font-black uppercase tracking-wider">Download</span>
                                                     </div>
                                                 </div>
                                             )}
