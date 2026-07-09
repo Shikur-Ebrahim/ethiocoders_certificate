@@ -24,7 +24,7 @@ export default function AdminApplicationsPage() {
     setUpdatingId(id);
     const res = await verifyApplication(id);
     if (res.success) {
-      setApplications(apps => apps.map(app => app.id === id ? { ...app, status: 'paid', certificateUrl: res.certificateUrl } : app));
+      setApplications(apps => apps.map(app => app.id === id ? { ...app, status: 'paid', certificateUrls: res.certificateUrls } : app));
     } else {
       alert(res.error || "Failed to verify application.");
     }
@@ -172,11 +172,24 @@ export default function AdminApplicationsPage() {
                     </div>
 
                     {/* Action Buttons */}
-                    {app.certificateUrl || app.status === 'paid' ? (
+                    {app.certificateUrls || app.certificateUrl || app.status === 'paid' ? (
                       <div className="pt-4 border-t border-slate-800/50">
-                        {app.certificateUrl ? (
+                        {app.certificateUrls && Object.keys(app.certificateUrls).length > 0 ? (
+                            <div className="space-y-2">
+                              {Object.entries(app.certificateUrls).map(([track, url]) => (
+                                <a 
+                                    key={track}
+                                    href={url as string}
+                                    target="_blank" rel="noopener noreferrer"
+                                    className="w-full py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 shadow-sm bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 hover:border-blue-500/40 capitalize"
+                                >
+                                    <Award className="w-4 h-4" /> View {track} Certificate
+                                </a>
+                              ))}
+                            </div>
+                        ) : app.certificateUrl ? (
                             <a 
-                                href={app.certificateUrl}
+                                href={app.certificateUrl as string}
                                 target="_blank" rel="noopener noreferrer"
                                 className="w-full py-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 shadow-sm bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 hover:border-blue-500/40"
                             >
