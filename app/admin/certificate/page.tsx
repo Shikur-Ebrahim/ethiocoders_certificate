@@ -263,7 +263,28 @@ export default function AdminCertificatePage() {
                                     )}
                                 </div>
 
-                                <div className="pt-2">
+                                <div className="pt-2 flex flex-col gap-3">
+                                    {displayUrl && !isUploading && (
+                                        <div className="flex gap-3">
+                                            <button 
+                                                onClick={() => fileInputRef.current?.click()}
+                                                disabled={isSaving}
+                                                className="flex-1 py-4 rounded-2xl font-black transition-all flex items-center justify-center gap-2 bg-slate-800/80 hover:bg-slate-700 text-white shadow-lg border border-slate-700 active:scale-95"
+                                            >
+                                                <RefreshCw className="h-5 w-5" />
+                                                <span className="uppercase tracking-widest text-xs">Change</span>
+                                            </button>
+                                            <button 
+                                                onClick={handleDownload}
+                                                disabled={isSaving}
+                                                className="flex-1 py-4 rounded-2xl font-black transition-all flex items-center justify-center gap-2 bg-slate-800/80 hover:bg-slate-700 text-white shadow-lg border border-slate-700 active:scale-95"
+                                            >
+                                                <Download className="h-5 w-5" />
+                                                <span className="uppercase tracking-widest text-xs">Download</span>
+                                            </button>
+                                        </div>
+                                    )}
+
                                     <button 
                                         onClick={handleSave}
                                         disabled={isSaving || isUploading || !publicId}
