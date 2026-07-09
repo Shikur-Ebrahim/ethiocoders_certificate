@@ -6,6 +6,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { findCertificateByPhone } from "./actions";
 
+const TRACK_LABELS: Record<string, string> = {
+  ai: "Artificial Intelligence",
+  programming: "Programming",
+  android: "Android Development",
+  data: "Data Science"
+};
+
 export default function VerifyPage() {
   const router = useRouter();
   const [phone, setPhone] = useState("");
@@ -13,7 +20,8 @@ export default function VerifyPage() {
   const [error, setError] = useState("");
   const [isNotRegistered, setIsNotRegistered] = useState(false);
   const [isPending, setIsPending] = useState(false);
-  const [certificateData, setCertificateData] = useState<{ url: string; name: string } | null>(null);
+  const [certificateData, setCertificateData] = useState<{ urls: Record<string, string>; name: string } | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("");
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +38,9 @@ export default function VerifyPage() {
 
     const res = await findCertificateByPhone(phone.trim());
 
-    if (res.success && res.certificateUrl) {
-      setCertificateData({ url: res.certificateUrl, name: res.fullName || "Applicant" });
+    if (res.success && res.certificateUrls) {
+      setCertificateData({ urls: res.certificateUrls, name: res.fullName || "Applicant" });
+      setActiveTab(Object.keys(res.certificateUrls)[0] || "");
     } else {
       const result = res as any;
       if (result.isNotRegistered) {
@@ -126,41 +135,59 @@ export default function VerifyPage() {
             </form>
           ) : (
             <div className="space-y-8 animate-in zoom-in-95 duration-500">
-
-              <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden border-4 border-zinc-100 dark:border-zinc-800 shadow-2xl bg-zinc-100 dark:bg-zinc-950">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={certificateData.url}
-                  alt="Your Certificate"
-                  className="w-full h-full object-contain"
-                />
+              
+              <div className="flex flex-wrap gap-2 justify-center mb-6">
+                {Object.keys(certificateData.urls).map(track => (
+                  <button
+                    key={track}
+                    onClick={() => setActiveTab(track)}
+                    className={`px-4 py-2 rounded-xl text-sm font-black transition-all capitalize ${
+                      activeTab === track ? "bg-emerald-500 text-white shadow-md" : "bg-zinc-100 dark:bg-zinc-900 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+                    }`}
+                  >
+                    {TRACK_LABELS[track] || track}
+                  </button>
+                ))}
               </div>
 
-              <div className="pt-2 space-y-3">
-                <p className="text-center text-sm font-black text-zinc-700 dark:text-zinc-200">
-                  Download as
-                </p>
+              {activeTab && certificateData.urls[activeTab] && (
+                <>
+                  <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden border-4 border-zinc-100 dark:border-zinc-800 shadow-2xl bg-zinc-100 dark:bg-zinc-950">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={certificateData.urls[activeTab]}
+                      alt={`${TRACK_LABELS[activeTab] || activeTab} Certificate`}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
 
-                <div className="flex w-full max-w-md mx-auto rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-xl">
-                  <a
-                    href={getDownloadUrl(certificateData.url, certificateData.name)}
-                    download={`Certificate_${certificateData.name.replace(/\s+/g, "_")}.pdf`}
-                    className="flex-1 h-16 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-base sm:text-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2"
-                  >
-                    <Download className="w-5 h-5" />
-                    <span>PDF</span>
-                  </a>
+                  <div className="pt-2 space-y-3">
+                    <p className="text-center text-sm font-black text-zinc-700 dark:text-zinc-200">
+                      Download as
+                    </p>
 
-                  <a
-                    href={getImageDownloadUrl(certificateData.url, certificateData.name)}
-                    download={`Certificate_${certificateData.name.replace(/\s+/g, "_")}.jpg`}
-                    className="flex-1 h-16 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-black text-base sm:text-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2 border-l border-zinc-200 dark:border-zinc-800"
-                  >
-                    <Download className="w-5 h-5" />
-                    <span>Image</span>
-                  </a>
-                </div>
-              </div>
+                    <div className="flex w-full max-w-md mx-auto rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-xl">
+                      <a
+                        href={getDownloadUrl(certificateData.urls[activeTab], certificateData.name)}
+                        download={`Certificate_${TRACK_LABELS[activeTab]?.replace(/\s+/g, "_") || activeTab}_${certificateData.name.replace(/\s+/g, "_")}.pdf`}
+                        className="flex-1 h-16 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-base sm:text-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2"
+                      >
+                        <Download className="w-5 h-5" />
+                        <span>PDF</span>
+                      </a>
+
+                      <a
+                        href={getImageDownloadUrl(certificateData.urls[activeTab], certificateData.name)}
+                        download={`Certificate_${TRACK_LABELS[activeTab]?.replace(/\s+/g, "_") || activeTab}_${certificateData.name.replace(/\s+/g, "_")}.jpg`}
+                        className="flex-1 h-16 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-black text-base sm:text-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2 border-l border-zinc-200 dark:border-zinc-800"
+                      >
+                        <Download className="w-5 h-5" />
+                        <span>Image</span>
+                      </a>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>

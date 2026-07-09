@@ -9,7 +9,7 @@ export interface AdminApplication extends Application {
   department?: string;
   educationStatus?: string;
   phone?: string;
-  certificateUrl?: string;
+  certificateUrls?: Record<string, string>;
 }
 
 export async function getAllApplications() {
@@ -70,12 +70,12 @@ export async function verifyApplication(id: string) {
     if (!docSnap.exists()) throw new Error("Application not found");
     const appData = docSnap.data();
 
-    // Fetch sample certificate logo ID
+    // Fetch sample certificate logo IDs
     const settingsRef = doc(db, "settings", "sample_certificate");
     const settingsSnap = await getDoc(settingsRef);
-    const logoId = settingsSnap.exists() ? settingsSnap.data().logoId : null;
+    const settingsData = settingsSnap.exists() ? settingsSnap.data() : null;
 
-    if (!logoId) throw new Error("No sample certificate template found in settings.");
+    if (!settingsData) throw new Error("No sample certificate template found in settings.");
 
     // IMPORTANT: Strip ALL commas from name and date - commas break Cloudinary URL parsing
     const rawName = (appData.fullName || appData.FullName || "Applicant Name").replace(/,/g, "").toUpperCase();
@@ -89,13 +89,30 @@ export async function verifyApplication(id: string) {
     const nameOverlay = `co_rgb:0000a0,l_text:Arial_50_bold:${name}/fl_layer_apply,g_west,x_70,y_100`;
     const dateOverlay = `co_rgb:444444,l_text:Arial_30:${encodedDate}/fl_layer_apply,g_west,x_70,y_170`;
 
-    const certificateUrl = `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/${nameOverlay}/${dateOverlay}/${logoId}`;
+    const selectedTracks: string[] = appData.selectedTracks || ["ai", "programming", "android", "data"];
+    const certificateUrls: Record<string, string> = {};
+
+    for (const track of selectedTracks) {
+        const logoId = settingsData[track];
+        if (logoId) {
+            certificateUrls[track] = `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/${nameOverlay}/${dateOverlay}/${logoId}`;
+        }
+    }
+
+    // fallback if no tracks matched but logoId exists
+    if (Object.keys(certificateUrls).length === 0 && settingsData.logoId) {
+        certificateUrls['ai'] = `https://res.cloudinary.com/${cloudinaryCloudName}/image/upload/${nameOverlay}/${dateOverlay}/${settingsData.logoId}`;
+    }
+
+    if (Object.keys(certificateUrls).length === 0) {
+        throw new Error("No sample certificate templates found for selected tracks.");
+    }
 
     await updateDoc(docRef, {
       status: "paid",
-      certificateUrl
+      certificateUrls
     });
-    return { success: true, certificateUrl };
+    return { success: true, certificateUrls };
   } catch (error: any) {
     console.error("Error verifying application:", error);
     return { success: false, error: error.message || "Failed to verify application" };

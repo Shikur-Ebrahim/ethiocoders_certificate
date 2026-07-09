@@ -17,19 +17,19 @@ export async function getSampleCertificate() {
   }
 }
 
-export async function saveSampleCertificate(logoId: string) {
+export async function saveSampleCertificate(track: string, logoId: string) {
   try {
     const docRef = doc(db, "settings", "sample_certificate");
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
       await updateDoc(docRef, {
-        logoId,
+        [track]: logoId,
         updatedAt: new Date().toISOString()
       });
     } else {
       await setDoc(docRef, {
-        logoId,
+        [track]: logoId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });

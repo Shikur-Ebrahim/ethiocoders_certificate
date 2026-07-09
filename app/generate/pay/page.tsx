@@ -24,6 +24,7 @@ type PaymentApplication = {
   fullName?: string;
   FullName?: string;
   educationStatus?: string;
+  selectedTracks?: string[];
 };
 
 type PaymentMethodType = "bank" | "telebirr";
@@ -340,7 +341,7 @@ function PaymentContent() {
 
               </div>
               
-              <div className="flex items-center gap-3 p-4 pl-4">
+              <div className="flex items-center gap-3 p-4 pl-4 border-t sm:border-t-0 border-zinc-200 dark:border-zinc-800">
                 <div className="w-8 h-8 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/5 flex items-center justify-center text-emerald-600">
                   <CreditCard className="w-4 h-4" />
                 </div>
@@ -348,13 +349,12 @@ function PaymentContent() {
                   <p className="text-[8px] font-black text-emerald-600/60 dark:text-emerald-500/40 tracking-wider mb-0.5">Level</p>
                   <p className="text-xs font-black text-emerald-600 dark:text-emerald-400 truncate tracking-tight">{application.educationStatus}</p>
                 </div>
-
               </div>
             </div>
 
             <div className="p-5 bg-zinc-50/50 dark:bg-zinc-900/20">
               <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium leading-relaxed">
-                To generate and download your <span className="text-zinc-900 dark:text-white font-bold">official certificate</span>, please complete the payment using one of our supported methods below.
+                To generate and download your <span className="text-zinc-900 dark:text-white font-bold">{application.selectedTracks?.length || 4} official certificate(s)</span>, please complete the payment using one of our supported methods below.
               </p>
             </div>
           </div>
@@ -389,9 +389,16 @@ function PaymentContent() {
                   Select Payment Method
                 </h2>
                 <div className="px-5 py-3 bg-zinc-900 rounded-xl border border-zinc-800 flex items-center justify-between w-full">
-                   <span className="text-[11px] font-black text-zinc-500 tracking-wide">Certificate Generate Fee</span>
+                   <div className="flex flex-col">
+                     <span className="text-[11px] font-black text-zinc-500 tracking-wide">Certificate Generate Fee</span>
+                     <span className="text-[10px] font-bold text-zinc-400">{application.selectedTracks?.length || 4} certificate(s)</span>
+                   </div>
                    <span className="text-xl font-black text-emerald-400 tracking-tight">
-                     {selectedMethod?.workerFee || paymentMethods.find(m => m.type === 'bank')?.workerFee || paymentMethods[0]?.workerFee || "100"} ETB
+                     {(() => {
+                       const baseFee = Number(selectedMethod?.workerFee || paymentMethods.find(m => m.type === 'bank')?.workerFee || paymentMethods[0]?.workerFee || 100);
+                       const trackCount = application.selectedTracks?.length || 4;
+                       return baseFee * trackCount;
+                     })()} ETB
                    </span>
                 </div>
 

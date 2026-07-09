@@ -7,6 +7,8 @@ import AdminSidebar from "@/components/AdminSidebar";
 import Image from "next/image";
 
 export default function AdminCertificatePage() {
+    const [activeTrack, setActiveTrack] = useState<"ai" | "programming" | "android" | "data">("ai");
+    const [allData, setAllData] = useState<Record<string, any>>({});
     const [publicId, setPublicId] = useState("");
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -18,7 +20,10 @@ export default function AdminCertificatePage() {
     useEffect(() => {
         const loadData = async () => {
             const data = await getSampleCertificate();
-            if (data?.logoId) {
+            setAllData(data || {});
+            if (data?.ai) {
+                setPublicId(data.ai);
+            } else if (data?.logoId) {
                 setPublicId(data.logoId);
             }
             setIsLoading(false);
@@ -38,6 +43,13 @@ export default function AdminCertificatePage() {
             }
         };
     }, [previewUrl]);
+
+    const handleTabChange = (track: "ai" | "programming" | "android" | "data") => {
+        if (isUploading || isSaving) return;
+        setActiveTrack(track);
+        setPreviewUrl(null);
+        setPublicId(allData?.[track] || allData?.logoId || "");
+    };
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -111,10 +123,11 @@ export default function AdminCertificatePage() {
 
         setIsSaving(true);
         try {
-            const res = await saveSampleCertificate(publicId);
+            const res = await saveSampleCertificate(activeTrack, publicId);
             if (res.success) {
                 alert("Sample certificate updated successfully!");
                 setPreviewUrl(null); // Clear local preview once saved
+                setAllData(prev => ({ ...prev, [activeTrack]: publicId }));
             } else {
                 throw new Error(res.error);
             }
@@ -173,6 +186,20 @@ export default function AdminCertificatePage() {
                             </div>
                         ) : (
                             <div className="space-y-8 relative z-10">
+                                <div className="flex gap-2 mb-2 p-1 bg-zinc-900 rounded-2xl border border-zinc-800">
+                                    {(["ai", "programming", "android", "data"] as const).map((track) => (
+                                        <button
+                                            key={track}
+                                            onClick={() => handleTabChange(track)}
+                                            className={`flex-1 py-2 rounded-xl text-xs font-black transition-all capitalize ${
+                                                activeTrack === track ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-300"
+                                            }`}
+                                        >
+                                            {track}
+                                        </button>
+                                    ))}
+                                </div>
+                                
                                 <div 
                                     onClick={() => !isUploading && fileInputRef.current?.click()}
                                     className={`aspect-[4/3] rounded-[2rem] border-2 border-dashed flex flex-col items-center justify-center text-center cursor-pointer transition-all relative overflow-hidden group

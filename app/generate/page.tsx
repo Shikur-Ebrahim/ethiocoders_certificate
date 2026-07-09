@@ -26,13 +26,20 @@ type EducationStatus =
   | "High School Student" 
   | "Not a Student";
 
+const TRACK_OPTIONS = [
+  { id: "ai", label: "Artificial Intelligence (AI)" },
+  { id: "programming", label: "Programming" },
+  { id: "android", label: "Android Development" },
+  { id: "data", label: "Data Science" },
+];
+
 export default function GeneratePage() {
   const router = useRouter();
   const [status, setStatus] = useState<EducationStatus>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [phoneError, setPhoneError] = useState<string | null>(null);
-
+  const [selectedTracks, setSelectedTracks] = useState<string[]>(TRACK_OPTIONS.map(t => t.id));
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setStatus(e.target.value as EducationStatus);
@@ -75,6 +82,7 @@ export default function GeneratePage() {
       const applicationData = {
         ...formData,
         educationStatus: status,
+        selectedTracks,
       };
       sessionStorage.setItem("pendingApplication", JSON.stringify(applicationData));
 
@@ -336,11 +344,57 @@ export default function GeneratePage() {
               </div>
             )}
 
+            {/* Track Selection Section */}
+            {status && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500 delay-150">
+                <label className="block text-sm font-bold text-zinc-500 dark:text-zinc-400">
+                  Select Certificates to Generate
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {TRACK_OPTIONS.map((track) => {
+                    const isSelected = selectedTracks.includes(track.id);
+                    return (
+                      <label
+                        key={track.id}
+                        className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                          isSelected
+                            ? "border-emerald-500 bg-emerald-50/50 dark:bg-emerald-500/10"
+                            : "border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 hover:border-emerald-500/50"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          className="w-5 h-5 rounded text-emerald-500 focus:ring-emerald-500 border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 cursor-pointer"
+                          checked={isSelected}
+                          onChange={() => {
+                            setSelectedTracks(prev =>
+                              prev.includes(track.id)
+                                ? prev.filter(t => t !== track.id)
+                                : [...prev, track.id]
+                            );
+                          }}
+                        />
+                        <span className={`font-bold text-sm ${isSelected ? "text-emerald-700 dark:text-emerald-400" : "text-zinc-700 dark:text-zinc-300"}`}>
+                          {track.label}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+                {selectedTracks.length === 0 && (
+                   <p className="text-[10px] font-black text-red-500 ml-1 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-300 flex items-center gap-1">
+                     <span className="w-1 h-1 rounded-full bg-red-500" />
+                     Please select at least one certificate track.
+                   </p>
+                )}
+              </div>
+            )}
+
             {/* Submit Button */}
             <div className="pt-4 md:pt-6">
               <button
                 type="submit"
-                disabled={!status || isSubmitting}
+                disabled={!status || isSubmitting || selectedTracks.length === 0}
                 className="w-full h-16 md:h-18 rounded-[1.5rem] bg-emerald-600 text-white font-bold text-lg md:text-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-3 group"
               >
                 {isSubmitting ? (

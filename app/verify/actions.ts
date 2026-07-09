@@ -42,29 +42,41 @@ export async function findCertificateByPhone(phone: string) {
     const docSnap = querySnapshot.docs[0];
     const data = docSnap.data();
 
-    if (data.status !== "paid" || !data.certificateUrl) {
+    if (data.status !== "paid" || (!data.certificateUrl && !data.certificateUrls)) {
       return { success: false, error: "Your application is still under review.", isPending: true };
     }
 
     // Auto-repair old broken Cloudinary URLs
-    let certificateUrl = data.certificateUrl;
-    const repairedUrl = repairCloudinaryUrl(certificateUrl);
+    let certificateUrls: Record<string, string> = data.certificateUrls || {};
+    let needsUpdate = false;
+
+    // Fallback for old single certificate
+    if (Object.keys(certificateUrls).length === 0 && data.certificateUrl) {
+      certificateUrls['ai'] = data.certificateUrl;
+    }
+
+    for (const [track, url] of Object.entries(certificateUrls)) {
+      const repairedUrl = repairCloudinaryUrl(url);
+      if (repairedUrl !== url) {
+        certificateUrls[track] = repairedUrl;
+        needsUpdate = true;
+      }
+    }
 
     // If the URL was repaired, also update it in the database for next time
-    if (repairedUrl !== certificateUrl) {
+    if (needsUpdate) {
       console.log("Auto-repairing broken certificate URL for:", docSnap.id);
       try {
         const docRef = doc(db, "applications", docSnap.id);
-        await updateDoc(docRef, { certificateUrl: repairedUrl });
+        await updateDoc(docRef, { certificateUrls });
       } catch (updateErr) {
         console.error("Failed to persist URL repair:", updateErr);
       }
-      certificateUrl = repairedUrl;
     }
 
     return {
       success: true,
-      certificateUrl,
+      certificateUrls,
       fullName: data.fullName || data.FullName || "Applicant"
     };
 
