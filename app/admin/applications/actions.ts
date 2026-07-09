@@ -78,7 +78,8 @@ export async function verifyApplication(id: string) {
     if (!settingsData) throw new Error("No sample certificate template found in settings.");
 
     // IMPORTANT: Strip ALL commas from name and date - commas break Cloudinary URL parsing
-    const rawName = (appData.fullName || appData.FullName || "Applicant Name").replace(/,/g, "").toUpperCase();
+    const toTitleCase = (str: string) => str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    const rawName = toTitleCase((appData.fullName || appData.FullName || "Applicant Name").replace(/,/g, ""));
     const name = encodeURIComponent(rawName);
     const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     const encodedDate = encodeURIComponent(dateStr).replace(/%2C/g, "%252C");
@@ -86,7 +87,7 @@ export async function verifyApplication(id: string) {
     const cloudinaryCloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
     // Cloudinary text overlays: adjusting positioning roughly to center-left as per typical certificates
-    const nameOverlay = `co_rgb:0000a0,l_text:Arial_50_bold:${name}/fl_layer_apply,g_west,x_70,y_100`;
+    const nameOverlay = `co_rgb:0000a0,l_text:Arial_50_bold:${name}/fl_layer_apply,g_west,x_70,y_130`;
     const dateOverlay = `co_rgb:444444,l_text:Arial_30:${encodedDate}/fl_layer_apply,g_west,x_70,y_170`;
 
     const selectedTracks: string[] = appData.selectedTracks || ["ai", "programming", "android", "data"];
