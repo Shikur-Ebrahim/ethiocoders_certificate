@@ -87,8 +87,8 @@ export async function verifyApplication(id: string) {
     const cloudinaryCloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
     // Cloudinary text overlays: adjusting positioning roughly to center-left as per typical certificates
-    const nameOverlay = `co_rgb:0000a0,l_text:Arial_50_bold:${name}/fl_layer_apply,g_west,x_70,y_130`;
-    const dateOverlay = `co_rgb:444444,l_text:Arial_30:${encodedDate}/fl_layer_apply,g_west,x_70,y_170`;
+    const nameOverlay = `co_rgb:0000a0,l_text:Arial_50_bold:${name}/fl_layer_apply,g_west,x_70,y_50`;
+    const dateOverlay = `co_rgb:444444,l_text:Arial_30:${encodedDate}/fl_layer_apply,g_west,x_70,y_100`;
 
     const selectedTracks: string[] = appData.selectedTracks || ["ai", "programming", "android", "data"];
     const certificateUrls: Record<string, string> = {};
